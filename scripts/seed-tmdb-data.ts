@@ -52,6 +52,7 @@ interface TmdbMovie {
   release_date: string; poster_path: string | null; backdrop_path: string | null;
   overview: string | null; runtime: number | null; vote_average: number | null;
   vote_count?: number | null;
+  popularity?: number | null;
   genres?: Array<{ id: number; name?: string }>;
 }
 
