@@ -1,0 +1,22 @@
+{
+  "film-noir": {
+    "name": "Film Noir / Neo-Noir",
+    "queries": ["Double Indemnity", "Detour 1945", "The Big Sleep", "Out of the Past", "Sunset Boulevard", "The Third Man", "Kiss Me Deadly", "Touch of Evil", "The Maltese Falcon", "Laura 1944", "Chinatown", "Blood Simple", "L.A. Confidential", "Memento", "Brick 2005", "Drive 2011"]
+  },
+  "giallo": {
+    "name": "Giallo",
+    "queries": ["The Bird with the Crystal Plumage", "Blood and Black Lace", "Deep Red 1975", "Suspiria 1977", "Tenebrae 1982", "Opera 1987", "Torso 1973", "What Have You Done to Solange?", "The Case of the Bloody Iris", "Don't Torture a Duckling"]
+  },
+  "nouvelle-vague": {
+    "name": "Nouvelle Vague",
+    "queries": ["The 400 Blows", "Breathless 1960", "Jules and Jim", "Cléo from 5 to 7", "Vivre sa vie", "Hiroshima Mon Amour", "Last Year at Marienbad", "Shoot the Piano Player", "My Night at Maud's", "Zazie in the Metro", "A Woman Is a Woman", "Contempt 1963"]
+  },
+  "cyberpunk": {
+    "name": "Cyberpunk",
+    "queries": ["Blade Runner", "Akira", "The Matrix", "Ghost in the Shell 1995", "Johnny Mnemonic", "Minority Report", "Strange Days", "Alita: Battle Angel", "RoboCop", "Upgrade 2018", "eXistenZ"]
+  },
+  "spaghetti-western": {
+    "name": "Spaghetti Western",
+    "queries": ["A Fistful of Dollars", "For a Few Dollars More", "The Good, the Bad and the Ugly", "Once Upon a Time in the West", "Django 1966", "The Great Silence", "The Mercenary 1968", "Companeros", "Keoma", "Face to Face 1967"]
+  }
+}
