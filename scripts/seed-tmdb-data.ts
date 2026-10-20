@@ -110,8 +110,27 @@ async function searchMovie(rawQuery: string): Promise<{ data: TmdbMovie } | null
   const path = `/search/movie?query=${encodeURIComponent(title)}&language=${CONFIG.LANGUAGE}${year ? `&year=${year}` : ""}`;
   const data = await tmdb<TmdbSearchResult>(path);
   await sleep(CONFIG.PAUSE_MS);
-  const best = data.results.find((r) => year ? r.release_date?.startsWith(year) : r.poster_path) ?? data.results[0];
-  return best ? { data: best } : null;
+
+  const norm = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "");
+  const target = norm(title);
+  // Solo candidatos estrenados, con póster y alguna valencia real.
+  const candidates = data.results.filter((r) => r.poster_path && r.release_date && (r.vote_count ?? 0) > 0);
+  const yearOk = candidates.filter((r) => year ? r.release_date.startsWith(year) : true);
+
+  // Puntuación: coincidencia exacta de título (visitado en ≥ 1e6), segundos prefijos,
+  // luego votos y popularidad reales de TMDB. Evita documentales/remakes con el mismo nombre.
+  const scored = (yearOk.length ? yearOk : []).map((r) => {
+    let score = (r.vote_count ?? 0) + (r.popularity ?? 0) / 10;
+    const t = norm(r.title ?? ""); const o = norm(r.original_title ?? "");
+    if (t === target || o === target) score += 1e6;
+    else if (t.startsWith(target) || o.startsWith(target) || target.startsWith(t) || target.startsWith(o)) score += 4e5;
+    return { r, score };
+  }).sort((a, b) => b.score - a.score);
+
+  const best = scored[0]?.r;
+  if (!best) { console.warn(`  Sin candidato fiable para ${rawQuery}`); return null; }
+  return { data: best };
 }
 
 async function seedStyles(supabase: SupabaseClient) {
@@ -174,9 +193,13 @@ async function seedDiscover(supabase: SupabaseClient) {
   }
 }
 
-const user = await getSupabase();
-const mode = process.argv[2] ?? "all";
-if (mode === "genres" || mode === "all") { await seedGenres(user); await sleep(CONFIG.PAUSE_MS); }
-if (mode === "discover" || mode === "all") { await seedDiscover(user); }
-if (mode === "styles" || mode === "all") { await seedStyles(user); }
-console.log("Terminado.");
+async function main() {
+  const supabase = await getSupabase();
+  const mode = process.argv[2] ?? "all";
+  if (mode === "genres" || mode === "all") { await seedGenres(supabase); await sleep(CONFIG.PAUSE_MS); }
+  if (mode === "discover" || mode === "all") { await seedDiscover(supabase); }
+  if (mode === "styles" || mode === "all") { await seedStyles(supabase); }
+  console.log("Terminado.");
+}
+
+void main().catch((err) => { console.error(err); process.exit(1); });
